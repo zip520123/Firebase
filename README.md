@@ -37,6 +37,22 @@ firebase deploy --only functions
 firebase deploy --only hosting
 ```
 2. 之後會回傳網站就可以看到剛剛發佈的網站
+3. hosting -> functions, firebase.json
+```json
+"hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [ {
+      "source": "/bigben", "function": "bigben"
+    },{
+      "source": "/app", "function": "app"
+    } ]
+  }
+```
 * 設定txt之後要過一段時間才有用，firebase產生憑證要24小時
 ![route53](/img/route53.png)
 ![hosting](/img/hosting.png)
@@ -54,4 +70,5 @@ npm install --save firebase-functions@latest
 ```bash
 firebase serve
 ```
+
 https://firebase.google.com/docs/hosting/functions
