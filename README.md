@@ -60,7 +60,7 @@ firebase deploy --only hosting
 * https://www.youtube.com/watch?v=Bcn5e57PpUc
 
 ***
-## 本地端測試 Run dynamic content locally
+## 本地端測試
 
 1.
 ```bash
@@ -70,5 +70,10 @@ npm install --save firebase-functions@latest
 ```bash
 firebase serve
 ```
+http://localhost:5000
+
+3. 用vscode debug
+.vscode內launch.json加上runtimeExecutable指向chrome
+"runtimeExecutable": "/Volumes/Macintosh HD/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 https://firebase.google.com/docs/hosting/functions

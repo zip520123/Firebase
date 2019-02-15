@@ -4,10 +4,55 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+var db = admin.firestore();
 exports.helloWorld = functions.https.onRequest((request, response) => {
  response.send("Hello from Firebase!");
 });
+exports.testFirestone = functions.https.onRequest((req , res)=>{
+  var docRef = db.collection('users').doc('alovelace');
 
+  var setAda = docRef.set({
+    first: 'Ada',
+    last: 'Lovelace',
+    born: 1815
+  });
+
+  var aTuringRef = db.collection('users').doc('aturing');
+
+  var setAlan = aTuringRef.set({
+    'first': 'Alan',
+    'middle': 'Mathison',
+    'last': 'Turing',
+    'born': 1913
+  });
+
+  db.collection('users').get()
+  .then((snapshot) => {
+    snapshot.forEach((doc) => {
+      console.log(doc.id, '=>', doc.data());
+    });
+    return res.send("Success")
+  })
+  .catch((err) => {
+    console.log('Error getting documents', err);
+    return res.send("fail", err)
+  });
+  
+})
+
+exports.readFirestone = functions.https.onRequest((req,res)=>{
+  return db.collection("users").get().then((querySnapshot) => {
+    var str = ""
+    querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+        str += (`${doc.id} => ${doc.data()} <br>`)
+    });
+    return res.send(str)
+  }).catch((err) => {
+    console.log(err)
+    res.send(err)
+  });
+})
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 exports.addMessage = functions.https.onRequest((req, res) => {
@@ -34,11 +79,19 @@ exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
       return snapshot.ref.parent.child('uppercase').set(uppercase);
     });
 
-exports.app = functions.https.onRequest((req, resp)=>{
-  resp.send('<h1>I am app</h1>');
+exports.app = functions.https.onRequest((req, res)=>{
+  res.send('<h1>I am app</h1>');
 })
 exports.bigben = functions.https.onRequest((req, res) => {
   const hours = (new Date().getHours() % 12) + 1 // London is UTC + 1hr;
+  // [START_EXCLUDE silent]
+  // [START cachecontrol]
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+  // [END cachecontrol]
+  // [START vary]
+  res.set('Vary', 'Accept-Encoding, X-My-Custom-Header');
+  // [END vary]
+  // [END_EXCLUDE]
   res.status(200).send(`<!doctype html>
     <head>
       <title>Time</title>
